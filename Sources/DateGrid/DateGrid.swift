@@ -78,7 +78,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                         ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                             HStack {
                                 ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                    Text("\(viewModel.months[j])")
+                                    if j < viewModel.months.count {
+                                        Text("\(viewModel.months[j])")
+                                    }
                                 }
                             }
                         }
