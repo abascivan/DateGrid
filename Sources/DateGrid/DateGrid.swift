@@ -95,59 +95,67 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }) {
                         Text("next")
                     }
+                    Spacer()
+                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
+                        Text(item)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .bold()
+                        Spacer()
+                    }
                 }
-                .frame(width: windowWidth)
-                HStack{
-                    ForEach(viewModel.months, id: \.self) { month in
-                        VStack {
-                            ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-                                HStack {
-                                    Spacer()
-                                    ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                        if j < viewModel.days(for: month).count {
-                                            if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
-                                                content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
-                                                    .background(
-                                                        GeometryReader(){ proxy in
-                                                            Color.clear
-                                                                .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                        }
-                                                    )
-                                                    .onTapGesture {
-                                                        print(viewModel.days(for: month)[j].day)
-                                                        selectedDate = viewModel.days(for: month)[j]
+            }
+            .frame(width: windowWidth)
+            HStack{
+                ForEach(viewModel.months, id: \.self) { month in
+                    VStack {
+                        ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                            HStack {
+                                Spacer()
+                                ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                    if j < viewModel.days(for: month).count {
+                                        if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
+                                            content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
+                                                .background(
+                                                    GeometryReader(){ proxy in
+                                                        Color.clear
+                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                     }
-                                                
-                                            } else {
-                                                content(viewModel.days(for: month)[j]).hidden()
-                                            }
+                                                )
+                                                .onTapGesture {
+                                                    print(viewModel.days(for: month)[j].day)
+                                                    selectedDate = viewModel.days(for: month)[j]
+                                                }
+                                            
+                                        } else {
+                                            content(viewModel.days(for: month)[j]).hidden()
                                         }
-                                        Spacer()
                                     }
+                                    Spacer()
                                 }
                             }
                         }
                     }
                 }
-                .frame(width: windowWidth * CGFloat(mothsCount))
-                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
             }
-            .onAppear(){
-                mothsCount = viewModel.months.count
-            }
+            .frame(width: windowWidth * CGFloat(mothsCount))
+            .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
+        }
+        .onAppear(){
+            mothsCount = viewModel.months.count
         }
     }
-    
-    //MARK: constant and supportive methods
-    private let numberOfDayasInAWeek = 7
-    private var tabViewHeight: CGFloat {
-        let calculatedTabViewHeightByCalculatedCellHeight = viewModel.mode.calculatedheight(calculatedCellSize.height)
-        return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight) + 10
-    }
-    
-    var weekContentHeight: CGFloat {
-        return max(viewModel.mode.estimateHeight, calculatedCellSize.height * 1)
-    }
+}
+
+//MARK: constant and supportive methods
+private let numberOfDayasInAWeek = 7
+private var tabViewHeight: CGFloat {
+    let calculatedTabViewHeightByCalculatedCellHeight = viewModel.mode.calculatedheight(calculatedCellSize.height)
+    return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight) + 10
+}
+
+var weekContentHeight: CGFloat {
+    return max(viewModel.mode.estimateHeight, calculatedCellSize.height * 1)
+}
 }
 
 struct CalendarView_Previews: PreviewProvider {
