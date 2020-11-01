@@ -73,7 +73,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                 ForEach(viewModel.months, id: \.self) { month in
                     VStack {
                         ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-                            Text("\(i)")
+                            ForEach( 0 ..< numberOfDayasInAWeek, id: \.self) { j in
+                                Text("\(i)")
+                            }
                         }
                     }
                 }
