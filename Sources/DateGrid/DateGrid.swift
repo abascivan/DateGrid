@@ -44,10 +44,11 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
                                         content(date).id(date)
                                             .background(
-                                                GeometryReader(content: { (proxy: GeometryProxy) in
+                                                GeometryReader(){ proxy in
                                                     Color.clear
                                                         .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                }))
+                                                }
+                                            )
                                             .onTapGesture {
                                                 selectedDate = date
                                             }
