@@ -77,7 +77,11 @@ public struct DateGrid<DateView>: View where DateView: View {
         } else {
             VStack{
                 HStack {
-                    Text("Month")
+                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .padding(.vertical)
+                        .frame(width: windowWidth)
                     Spacer()
                     Button(action: {
                         print("prev")
