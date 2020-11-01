@@ -45,7 +45,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                         content(date).id(date)
                                             .background(Color.clear)
                                             .onTapGesture {
-                                                selectedDate w= date
+                                                selectedDate = date
                                             }
                                         
                                     } else {
