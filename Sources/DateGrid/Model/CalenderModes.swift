@@ -24,7 +24,7 @@ public enum CalenderMode {
         switch self {
         case .month(estimateHeight: _):
             print("cellHeight: \(cellHeight)")
-            return cellHeight * 7
+            return cellHeight * 6
         case .week(estimateHeight: _):
             print("cellHeight: \(cellHeight)")
             return cellHeight * 1
