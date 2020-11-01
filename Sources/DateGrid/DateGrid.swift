@@ -89,7 +89,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                             offset -= windowWidth
                         }
                     }) {
-                        Text("prev")
+                        Image(systemName: "chevron.left")
                     }
                     Button(action: {
                         print("next")
@@ -97,7 +97,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                             offset += windowWidth
                         }
                     }) {
-                        Text("next")
+                        Image(systemName: "chevron.right")
                     }
                     .padding(.trailing)
                 }
