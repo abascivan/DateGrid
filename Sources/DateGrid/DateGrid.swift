@@ -29,81 +29,54 @@ public struct DateGrid<DateView>: View where DateView: View {
     
     public var body: some View {
         
-        Group {
-            if case .month( _) = viewModel.mode {
-                
-                TabView(selection: $selectedMonth) {
+        if #available(iOS 14.0, *) {
+            Group {
+                if case .month( _) = viewModel.mode {
                     
-                    ForEach(viewModel.months, id: \.self) { month in
+                    TabView(selection: $selectedMonth) {
                         
-                        VStack {
+                        ForEach(viewModel.months, id: \.self) { month in
                             
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                            VStack {
                                 
-                                ForEach(viewModel.days(for: month), id: \.self) { date in
-                                    if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
-                                        content(date).id(date)
-                                            .background(
-                                                GeometryReader(){ proxy in
-                                                    Color.clear
-                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                                    
+                                    ForEach(viewModel.days(for: month), id: \.self) { date in
+                                        if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
+                                            content(date).id(date)
+                                                .background(
+                                                    GeometryReader(){ proxy in
+                                                        Color.clear
+                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                    }
+                                                )
+                                                .onTapGesture {
+                                                    selectedDate = date
                                                 }
-                                            )
-                                            .onTapGesture {
-                                                selectedDate = date
-                                            }
-                                        
-                                    } else {
-                                        content(date).hidden()
+                                            
+                                        } else {
+                                            content(date).hidden()
+                                        }
                                     }
                                 }
+                                .padding(.vertical, 5)
+                                .onPreferenceChange(MyPreferenceKey.self, perform: { value in
+                                    calculatedCellSize = value.size
+                                })
+                                .tag(month)
+                                //Tab view frame alignment to .Top didnt work dtz y
+                                Spacer()
                             }
-                            .padding(.vertical, 5)
-                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-                                calculatedCellSize = value.size
-                            })
-                            .tag(month)
-                            //Tab view frame alignment to .Top didnt work dtz y
-                            Spacer()
                         }
                     }
-                }
-                
-            } else {
-                
-                TabView(selection: $selectedMonth) {
                     
-                    ForEach(viewModel.weeks, id: \.self) { week in
-                        
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek)) {
-                            
-                            ForEach(viewModel.days(forWeek: week), id: \.self) { date in
-                                if viewModel.calendar.isDate(date, equalTo: week, toGranularity: .month) {
-                                    content(date).id(date)
-                                        .background(
-                                            GeometryReader(content: { (proxy: GeometryProxy) in
-                                                Color.clear
-                                                    .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                            }))
-                                        .onTapGesture {
-                                            selectedDate = date
-                                        }
-                                } else {
-                                    content(date)
-                                        .opacity(0.5)
-                                }
-                            }
-                        }
-                        .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-                            calculatedCellSize = value.size
-                        })
-                        .tag(week)
-                    }
                 }
             }
+            .frame(height: tabViewHeight, alignment: .center)
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        } else {
+            // Fallback on earlier versions
         }
-        .frame(height: tabViewHeight, alignment: .center)
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     //MARK: constant and supportive methods
