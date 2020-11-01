@@ -81,7 +81,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .font(.headline)
                         .fontWeight(.bold)
                         .padding(.vertical)
-                        .frame(width: windowWidth)
                     Spacer()
                     Button(action: {
                         print("prev")
