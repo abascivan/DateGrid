@@ -14,15 +14,17 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>, mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
         self._selectedMonth = selectedMonth
         self.content = content
+        self._selectedDate = selectedDate
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
     @Binding var selectedMonth: Date
+    @Binding var selectedDate: Date
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     
     public var body: some View {
@@ -46,6 +48,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                     Color.clear
                                                         .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                 }))
+                                            .onTapGesture {
+                                                selectedDate = date
+                                            }
                                         
                                     } else {
                                         content(date).hidden()
@@ -111,13 +116,14 @@ public struct DateGrid<DateView>: View where DateView: View {
 struct CalendarView_Previews: PreviewProvider {
     
     @State static var selectedMonthDate = Date()
+    @State static var selectedDate = Date()
     
     static var previews: some View {
         VStack {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, mode: .month(estimateHeight: 400)) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400)) { date in
                 
                 NoramalDayCell(date: date)
             }
