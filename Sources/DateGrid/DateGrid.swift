@@ -62,6 +62,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                                 calculatedCellSize = value.size
                             })
                             .tag(month)
+                            //Tab view frame alignment to .Top didnt work dtz y
+                            Spacer()
                         }
                     }
                 }
