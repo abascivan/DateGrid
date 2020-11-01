@@ -57,6 +57,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
+                .padding(0)
                 .background(Color.gray)
                 
             } else {
