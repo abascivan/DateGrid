@@ -91,7 +91,7 @@ public struct DateGrid<DateView>: View where DateView: View {
             }
         }
 //        .frame(alignment: .center)
-//        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     //MARK: constant and supportive methods
