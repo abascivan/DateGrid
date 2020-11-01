@@ -28,7 +28,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var selectedDate: Date
     @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
-    @State var offset = (UIScreen.main.bounds.width * 2) / 2
+    @State var offset: CGFloat = 0
     
     let windowWidth = UIScreen.main.bounds.width
     
@@ -86,6 +86,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                     Button(action: {
                         print("next")
+                        offset += windowWidth
                     }) {
                         Text("next")
                     }
@@ -125,10 +126,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
                 .frame(width: windowWidth * CGFloat(mothsCount))
-                .offset(x: offset)
+                .offset(x: (windowWidth * CGFloat(mothsCount) / CGFloat(mothsCount) - CGFloat(offset)))
             }
             .onAppear(){
-                offset = windowWidth * CGFloat(mothsCount) / CGFloat(mothsCount)
                 mothsCount = viewModel.months.count
             }
         }
