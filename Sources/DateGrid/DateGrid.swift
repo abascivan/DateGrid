@@ -81,7 +81,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     Spacer()
                     Button(action: {
                         print("prev")
-                        withAnimation(.default(duration: 3)) {
+                        withAnimation(.easeInOut(duration: 3)) {
                             offset -= windowWidth
                         }
                     }) {
@@ -89,7 +89,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                     Button(action: {
                         print("next")
-                        withAnimation(.default(duration: 3)) {
+                        withAnimation(.easeInOut(duration: 3)) {
                             offset += windowWidth
                         }
                     }) {
