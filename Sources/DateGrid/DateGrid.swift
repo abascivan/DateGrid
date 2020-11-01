@@ -43,8 +43,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                         content(date).id(date)
                                             .background(
                                                 GeometryReader(content: { (proxy: GeometryProxy) in
-                                                    Color.clear
-                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                    Color.red
                                                 }))
                                         
                                     } else {
