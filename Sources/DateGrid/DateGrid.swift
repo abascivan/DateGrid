@@ -129,8 +129,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-                .frame(width: windowWidth * CGFloat(mothsCount - 1))
-                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / CGFloat(mothsCount - 1) - CGFloat(offset)))
+                .frame(width: windowWidth * CGFloat(mothsCount))
+                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
             }
             .onAppear(){
                 mothsCount = viewModel.months.count
