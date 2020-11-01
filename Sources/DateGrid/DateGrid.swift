@@ -53,7 +53,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     }
                                 }
                             }
-//                            .tag(month)
+                            .background(Color.gray, opacity(0.5))
+                            .tag(month)
                         }
                     }
                 }
