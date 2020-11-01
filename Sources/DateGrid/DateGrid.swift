@@ -40,12 +40,17 @@ public struct DateGrid<DateView>: View where DateView: View {
                                 
                                 ForEach(viewModel.days(for: month), id: \.self) { date in
                                     if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
+                                        if viewModel.calendar.isDateInToday(date: date) {
                                         content(date).id(date)
-                                            .background(
-                                                GeometryReader(content: { (proxy: GeometryProxy) in
-                                                    Color.clear
-                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                }))
+                                            .background(Color.red)
+                                        } else {
+                                            content(date).id(date)
+                                                .background(
+                                                    GeometryReader(content: { (proxy: GeometryProxy) in
+                                                        Color.clear
+                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                    }))
+                                        }
                                         
                                     } else {
                                         content(date).hidden()
