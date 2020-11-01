@@ -85,6 +85,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                 Color.clear
                                                     .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                             }))
+                                        .onTapGesture {
+                                            selectedDate = date
+                                        }
                                 } else {
                                     content(date)
                                         .opacity(0.5)
