@@ -27,6 +27,8 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var selectedDate: Date
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     
+    let windowWidth = UIScreen.main.bounds.width
+    
     public var body: some View {
         
         if #available(iOS 14.0, *) {
@@ -64,6 +66,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         //Tab view frame alignment to .Top didnt work dtz y
                         Spacer()
                     }
+                    .frame(width: windowWidth)
                 }
             }
             .frame(height: tabViewHeight, alignment: .center)
