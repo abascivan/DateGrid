@@ -95,6 +95,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }) {
                         Text("next")
                     }
+                }
+                .frame(width: windowWidth)
+                HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
                         Text(item)
