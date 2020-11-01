@@ -77,7 +77,7 @@ public struct DateGrid<DateView>: View where DateView: View {
         } else {
             VStack{
                 HStack {
-                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
+                    Text(DateFormatter.monthAndYear.string(from: selectedDate))
                         .font(.headline)
                         .fontWeight(.bold)
                         .padding(.vertical)
