@@ -58,7 +58,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     }
                                 }
                             }
-                            .padding(.vertical)
+                            .padding(.vertical, 5)
                             .onPreferenceChange(MyPreferenceKey.self, perform: { value in
                                 calculatedCellSize = value.size
                             })
@@ -107,7 +107,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     private let numberOfDayasInAWeek = 7
     private var tabViewHeight: CGFloat {
         let calculatedTabViewHeightByCalculatedCellHeight = viewModel.mode.calculatedheight(calculatedCellSize.height)
-        return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight)
+        return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight) + 10
     }
     
     var weekContentHeight: CGFloat {
