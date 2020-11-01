@@ -79,20 +79,22 @@ public struct DateGrid<DateView>: View where DateView: View {
                             HStack {
                                 Spacer()
                                 ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                    if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
-                                        content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
-                                            .background(
-                                                GeometryReader(){ proxy in
-                                                    Color.clear
-                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                    if j < viewModel.days(for: month).count {
+                                        if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
+                                            content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
+                                                .background(
+                                                    GeometryReader(){ proxy in
+                                                        Color.clear
+                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                    }
+                                                )
+                                                .onTapGesture {
+                                                    selectedDate = viewModel.days(for: month)[j]
                                                 }
-                                            )
-                                            .onTapGesture {
-                                                selectedDate = viewModel.days(for: month)[j]
-                                            }
-                                        
-                                    } else {
-                                        content(viewModel.days(for: month)[j]).hidden()
+                                            
+                                        } else {
+                                            content(viewModel.days(for: month)[j]).hidden()
+                                        }
                                     }
                                     Spacer()
                                 }
