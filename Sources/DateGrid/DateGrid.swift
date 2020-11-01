@@ -81,6 +81,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .font(.headline)
                         .fontWeight(.bold)
                         .padding(.vertical)
+                        .padding(.leading)
                     Spacer()
                     Button(action: {
                         print("prev")
@@ -98,6 +99,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }) {
                         Text("next")
                     }
+                    .padding(.trailing)
                 }
                 .frame(width: windowWidth)
                 HStack {
