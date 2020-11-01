@@ -46,7 +46,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                             .background(
                                                 GeometryReader(content: { (proxy: GeometryProxy) in
                                                     Color.clear
-                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+//                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                 }))
                                             .onTapGesture {
                                                 selectedDate = date
