@@ -35,41 +35,51 @@ public struct DateGrid<DateView>: View where DateView: View {
     public var body: some View {
         
         if #available(iOS 14.0, *) {
-            TabView(selection: $selectedMonth) {
-                
-                ForEach(viewModel.months, id: \.self) { month in
+            VStack {
+                HStack {
+                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .padding(.vertical)
+                        .padding(.leading)
+                    Spacer()
+                }
+                TabView(selection: $selectedMonth) {
                     
-                    VStack {
+                    ForEach(viewModel.months, id: \.self) { month in
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                        VStack {
                             
-                            ForEach(viewModel.days(for: month), id: \.self) { date in
-                                if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
-                                    content(date).id(date)
-                                        .background(
-                                            GeometryReader(){ proxy in
-                                                Color.clear
-                                                    .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                                
+                                ForEach(viewModel.days(for: month), id: \.self) { date in
+                                    if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
+                                        content(date).id(date)
+                                            .background(
+                                                GeometryReader(){ proxy in
+                                                    Color.clear
+                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                }
+                                            )
+                                            .onTapGesture {
+                                                selectedDate = date
                                             }
-                                        )
-                                        .onTapGesture {
-                                            selectedDate = date
-                                        }
-                                    
-                                } else {
-                                    content(date).hidden()
+                                        
+                                    } else {
+                                        content(date).hidden()
+                                    }
                                 }
                             }
+                            .padding(.vertical, 5)
+                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
+                                calculatedCellSize = value.size
+                            })
+                            .tag(month)
+                            //Tab view frame alignment to .Top didnt work dtz y
+                            Spacer()
                         }
-                        .padding(.vertical, 5)
-                        .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-                            calculatedCellSize = value.size
-                        })
-                        .tag(month)
-                        //Tab view frame alignment to .Top didnt work dtz y
-                        Spacer()
+                        .frame(width: windowWidth)
                     }
-                    .frame(width: windowWidth)
                 }
             }
             .frame(height: tabViewHeight, alignment: .center)
