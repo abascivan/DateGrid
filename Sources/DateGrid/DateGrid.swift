@@ -71,7 +71,7 @@ public struct DateGrid<DateView>: View where DateView: View {
         } else {
             VStack{
                 ForEach(viewModel.months, id: \.self) { month in
-                    Text("\(DateFormatter.monthAndYear)")
+                    Text("\(DateFormatter.monthAndYear.string(from: month))")
                 }
             }
         }
