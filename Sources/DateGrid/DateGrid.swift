@@ -81,13 +81,17 @@ public struct DateGrid<DateView>: View where DateView: View {
                     Spacer()
                     Button(action: {
                         print("prev")
-                        offset -= windowWidth
+                        withAnimation {
+                            offset -= windowWidth
+                        }
                     }) {
                         Text("prev")
                     }
                     Button(action: {
                         print("next")
-                        offset += windowWidth
+                        withAnimation {
+                            offset += windowWidth
+                        }
                     }) {
                         Text("next")
                     }
