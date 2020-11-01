@@ -58,7 +58,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     }
                                 }
                             }
-                            .padding(.top)
+                            .padding(.vertical)
                             .onPreferenceChange(MyPreferenceKey.self, perform: { value in
                                 calculatedCellSize = value.size
                             })
