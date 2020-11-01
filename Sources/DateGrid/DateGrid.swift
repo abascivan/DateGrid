@@ -29,7 +29,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     
     public var body: some View {
         
-        Group {
+        VStack {
             if case .month( _) = viewModel.mode {
                 
                 TabView(selection: $selectedMonth) {
@@ -89,7 +89,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                 }
             }
         }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     //MARK: constant and supportive methods
