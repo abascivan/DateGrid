@@ -43,11 +43,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                 ForEach(viewModel.days(for: month), id: \.self) { date in
                                     if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
                                         content(date).id(date)
-                                            .background(
-                                                GeometryReader(content: { (proxy: GeometryProxy) in
-                                                    Color.clear
-//                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                }))
+                                            .background(Color.clear)
                                             .onTapGesture {
                                                 selectedDate = date
                                             }
@@ -95,7 +91,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                 }
             }
         }
-        .frame(height: tabViewHeight, alignment: .center)
+        .frame(alignment: .center)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
