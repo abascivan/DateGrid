@@ -69,9 +69,13 @@ public struct DateGrid<DateView>: View where DateView: View {
             .frame(height: tabViewHeight, alignment: .center)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
-            VStack{
+            HStack{
                 ForEach(viewModel.months, id: \.self) { month in
-                    Text("\(DateFormatter.monthAndYear.string(from: month))")
+                    VStack {
+                        ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                            Text("\(i)")
+                        }
+                    }
                 }
             }
         }
