@@ -89,6 +89,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Text("next")
                     }
                 }
+                .background(Color.red)
                 .frame(width: windowWidth)
                 HStack{
                     ForEach(viewModel.months, id: \.self) { month in
