@@ -74,7 +74,23 @@ public struct DateGrid<DateView>: View where DateView: View {
             .frame(height: tabViewHeight, alignment: .center)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
-                HStack{
+            VStack{
+                HStack {
+                    Text("Month")
+                    Spacer()
+                    Button(action: {
+                        print("prev")
+                    }) {
+                        Text("prev")
+                    }
+                    Button(action: {
+                        print("prev")
+                    }) {
+                        Text("next")
+                    }
+                }
+                .frame(x: windowWidth)
+                HStack {
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
@@ -106,6 +122,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
+            }
                 .frame(width: windowWidth * CGFloat(mothsCount))
                 .offset(x: windowWidth * CGFloat(mothsCount) / CGFloat(mothsCount))
             .onAppear(){
