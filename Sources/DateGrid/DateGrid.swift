@@ -130,7 +130,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-                .animation(Animation.default(duration: 3))
                 .frame(width: windowWidth * CGFloat(mothsCount))
                 .offset(x: (windowWidth * CGFloat(mothsCount) / CGFloat(mothsCount) - CGFloat(offset)))
             }
