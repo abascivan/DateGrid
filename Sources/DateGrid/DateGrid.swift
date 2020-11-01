@@ -61,7 +61,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                 .background(Color.gray)
                 
             } else {
-                
                 TabView(selection: $selectedMonth) {
                     
                     ForEach(viewModel.weeks, id: \.self) { week in
@@ -90,7 +89,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                 }
             }
         }
-//        .frame(alignment: .center)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
