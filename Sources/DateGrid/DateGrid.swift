@@ -69,7 +69,11 @@ public struct DateGrid<DateView>: View where DateView: View {
             .frame(height: tabViewHeight, alignment: .center)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
-            // Fallback on earlier versions
+            VStack{
+                ForEach(viewModel.months, id: \.self) { month in
+                    Text("\(DateFormatter.monthAndYear)")
+                }
+            }
         }
     }
     
