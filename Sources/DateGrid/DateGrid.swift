@@ -91,12 +91,20 @@ public struct DateGrid<DateView>: View where DateView: View {
                 }
             }
         }
-//        .frame(alignment: .center)
+        .frame(height: tabViewHeight, alignment: .center)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     //MARK: constant and supportive methods
     private let numberOfDayasInAWeek = 7
+    private var tabViewHeight: CGFloat {
+        let calculatedTabViewHeightByCalculatedCellHeight = viewModel.mode.calculatedheight(calculatedCellSize.height)
+        return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight)
+    }
+    
+    var weekContentHeight: CGFloat {
+        return max(viewModel.mode.estimateHeight, calculatedCellSize.height * 1)
+    }
 }
 
 struct CalendarView_Previews: PreviewProvider {
