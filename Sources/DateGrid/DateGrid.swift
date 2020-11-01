@@ -45,7 +45,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                         content(date).id(date)
                                             .background(Color.clear)
                                             .onTapGesture {
-                                                selectedDate = date
+                                                selectedDate w= date
                                             }
                                         
                                     } else {
@@ -53,7 +53,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     }
                                 }
                             }
-                            .background(Color.gray, opacity(0.5))
+                            .background(Color.gray)
                             .tag(month)
                         }
                     }
