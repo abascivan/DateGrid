@@ -53,10 +53,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                     }
                                 }
                             }
-//                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-//                                calculatedCellSize = value.size
-//                            })
-                            .tag(month)
+//                            .tag(month)
                         }
                     }
                 }
