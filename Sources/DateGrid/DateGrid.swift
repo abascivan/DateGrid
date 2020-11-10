@@ -83,7 +83,23 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.vertical)
                         .padding(.leading)
                     Spacer()
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 1)) {
+                            offset -= windowWidth
+                        }
+                    }) {
+                        Image(systemName: "chevron.left")
+                    }
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 1)) {
+                            offset += windowWidth
+                        }
+                    }) {
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding(.trailing)
                 }
+                .frame(width: windowWidth)
                 HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
@@ -93,7 +109,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                TabView {
+                .frame(width: windowWidth)
+                HStack{
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
@@ -124,7 +141,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-                .tabViewStyle(PageTabViewStyle())
+                .frame(width: windowWidth * CGFloat(mothsCount))
+                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
             }
             .onAppear(){
                 mothsCount = viewModel.months.count
