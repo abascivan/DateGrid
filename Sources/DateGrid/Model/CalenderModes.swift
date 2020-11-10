@@ -23,10 +23,8 @@ public enum CalenderMode {
     func calculatedheight(_ cellHeight: CGFloat) -> CGFloat {
         switch self {
         case .month(estimateHeight: _):
-            print("cellHeight: \(cellHeight)")
             return cellHeight * 6
         case .week(estimateHeight: _):
-            print("cellHeight: \(cellHeight)")
             return cellHeight * 1
         }
     }
