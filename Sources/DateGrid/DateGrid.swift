@@ -75,79 +75,78 @@ public struct DateGrid<DateView>: View where DateView: View {
             .frame(height: tabViewHeight, alignment: .center)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
-            DataGrid2()
-//            VStack{
-//                HStack {
-//                    Text(DateFormatter.monthAndYear.string(from: selectedDate))
-//                        .font(.headline)
-//                        .fontWeight(.bold)
-//                        .padding(.vertical)
-//                        .padding(.leading)
-//                    Spacer()
-//                    Button(action: {
-//                        withAnimation(.easeInOut(duration: 1)) {
-//                            offset -= windowWidth
-//                        }
-//                    }) {
-//                        Image(systemName: "chevron.left")
-//                    }
-//                    Button(action: {
-//                        withAnimation(.easeInOut(duration: 1)) {
-//                            offset += windowWidth
-//                        }
-//                    }) {
-//                        Image(systemName: "chevron.right")
-//                    }
-//                    .padding(.trailing)
-//                }
-//                .frame(width: windowWidth)
-//                HStack {
-//                    Spacer()
-//                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
-//                        Text(item)
-//                            .font(.system(.subheadline, design: .monospaced))
-//                            .bold()
-//                        Spacer()
-//                    }
-//                }
-//                .frame(width: windowWidth)
-//                HStack{
-//                    ForEach(viewModel.months, id: \.self) { month in
-//                        VStack {
-//                            ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-//                                HStack {
-//                                    Spacer()
-//                                    ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-//                                        if j < viewModel.days(for: month).count {
-//                                            if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
-//                                                content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
-//                                                    .background(
-//                                                        GeometryReader(){ proxy in
-//                                                            Color.clear
-//                                                                .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-//                                                        }
-//                                                    )
-//                                                    .onTapGesture {
-//                                                        selectedDate = viewModel.days(for: month)[j]
-//                                                    }
-//
-//                                            } else {
-//                                                content(viewModel.days(for: month)[j]).hidden()
-//                                            }
-//                                        }
-//                                        Spacer()
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                .frame(width: windowWidth * CGFloat(mothsCount))
-//                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
-//            }
-//            .onAppear(){
-//                mothsCount = viewModel.months.count
-//            }
+            VStack{
+                HStack {
+                    Text(DateFormatter.monthAndYear.string(from: selectedDate))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .padding(.vertical)
+                        .padding(.leading)
+                    Spacer()
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 1)) {
+                            offset -= windowWidth
+                        }
+                    }) {
+                        Image(systemName: "chevron.left")
+                    }
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 1)) {
+                            offset += windowWidth
+                        }
+                    }) {
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding(.trailing)
+                }
+                .frame(width: windowWidth)
+                HStack {
+                    Spacer()
+                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
+                        Text(item)
+                            .font(.system(.subheadline, design: .monospaced))
+                            .bold()
+                        Spacer()
+                    }
+                }
+                .frame(width: windowWidth)
+                HStack{
+                    ForEach(viewModel.months, id: \.self) { month in
+                        VStack {
+                            ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                                HStack {
+                                    Spacer()
+                                    ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                        if j < viewModel.days(for: month).count {
+                                            if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
+                                                content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
+                                                    .background(
+                                                        GeometryReader(){ proxy in
+                                                            Color.clear
+                                                                .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                        }
+                                                    )
+                                                    .onTapGesture {
+                                                        selectedDate = viewModel.days(for: month)[j]
+                                                    }
+                                                
+                                            } else {
+                                                content(viewModel.days(for: month)[j]).hidden()
+                                            }
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .frame(width: windowWidth * CGFloat(mothsCount))
+                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
+            }
+            .onAppear(){
+                mothsCount = viewModel.months.count
+            }
         }
     }
     
