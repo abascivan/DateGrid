@@ -25,7 +25,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
     let tilePadding: CGFloat = 20
-    @State private var activePageIndex: Int = 1
+    @State private var activePageIndex: Int = 0
     @Binding var selectedMonth: Date
     @Binding var selectedDate: Date
     @Binding var mothsCount: Int
