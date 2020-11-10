@@ -257,7 +257,7 @@ struct PagingScrollView: View {
                 ForEach(0..<self.items.count) { index in
                     
                         self.items[index]
-//                            .frame(width: self.tileWidth)
+                            .scaledToFill()
                     
                 }
             }
