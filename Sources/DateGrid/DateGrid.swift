@@ -113,7 +113,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
 //                .frame(width: windowWidth)
-                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.viewModel.months.count ,pageWidth: windowWidth, tileWidth: self.tileWidth, tilePadding: self.tilePadding){
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.viewModel.months.count ,pageWidth: windowWidth, tileWidth: self.tileWidth, tilePadding: 0){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
