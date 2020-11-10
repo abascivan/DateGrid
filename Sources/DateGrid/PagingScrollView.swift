@@ -1,8 +1,9 @@
 //
-//  SwiftUIView.swift
-//  
+//  PagingScrollView.swift
+//  MeetingAssistant
 //
 //  Created by Ahmet Bascivan on 10/11/2020.
+//  Copyright © 2020 Ahmet Bascivan. All rights reserved.
 //
 
 import SwiftUI
