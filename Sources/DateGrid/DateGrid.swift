@@ -124,6 +124,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
+                .tabViewStyle(PageTabViewStyel())
             }
             .onAppear(){
                 mothsCount = viewModel.months.count
