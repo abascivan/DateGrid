@@ -102,7 +102,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                     .padding(.trailing)
                 }
-//                .frame(width: windowWidth)
+                .frame(width: windowWidth)
                 HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
@@ -112,7 +112,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-//                .frame(width: windowWidth)
+                .frame(width: windowWidth)
                 PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.viewModel.months.count ,pageWidth: windowWidth, tileWidth: self.tileWidth, tilePadding: self.tilePadding){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
@@ -144,8 +144,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-//                .frame(width: windowWidth * CGFloat(mothsCount))
-//                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
+                .frame(width: windowWidth * CGFloat(mothsCount))
+                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
             }
             .onAppear(){
                 mothsCount = viewModel.months.count
