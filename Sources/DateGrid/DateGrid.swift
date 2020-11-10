@@ -222,6 +222,7 @@ struct PagingScrollView: View {
     
     
     func offsetForPageIndex(_ index: Int)->CGFloat {
+        print("offsetForPageIndex tileWidth: \(tileWidth) tilePadding \(tilePadding)")
         let activePageOffset = CGFloat(index)*(tileWidth+tilePadding)
         
         return self.leadingOffset - activePageOffset
