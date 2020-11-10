@@ -84,9 +84,9 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.leading)
                     Spacer()
                     Button(action: {
-//                        withAnimation(.easeInOut(duration: 1)) {
+                        withAnimation(.easeInOut(duration: 1)) {
                             offset -= windowWidth
-//                        }
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                     }
