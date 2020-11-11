@@ -176,7 +176,7 @@ struct PagingScrollView: View {
         self.pageWidth = pageWidth
         self.tileWidth = tileWidth
         self.tilePadding = tilePadding
-        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
+        self.tileRemain = 0
         self.itemCount = itemCount
         self.contentWidth = (tileWidth+tilePadding)*CGFloat(self.itemCount)
         
