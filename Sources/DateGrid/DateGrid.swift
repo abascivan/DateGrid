@@ -30,7 +30,6 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var selectedDate: Date
     @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
-//    @State var offset: CGFloat = 0
     
     let windowWidth: CGFloat = UIScreen.main.bounds.width
     
@@ -97,7 +96,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
 //                .frame(width: windowWidth)
-                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.viewModel.months.count ,pageWidth: windowWidth, tileWidth: windowWidth, tilePadding: 0){
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.$mothsCount ,pageWidth: windowWidth, tileWidth: windowWidth, tilePadding: 0){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
