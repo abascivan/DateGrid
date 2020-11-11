@@ -14,12 +14,11 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, mothsCount: Binding<Int>, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
         self._selectedMonth = selectedMonth
         self.content = content
         self._selectedDate = selectedDate
-        self._mothsCount = mothsCount
     }
     
     var viewModel: DateGridViewModel
@@ -28,7 +27,6 @@ public struct DateGrid<DateView>: View where DateView: View {
     @State private var activePageIndex: Int = 0
     @Binding var selectedMonth: Date
     @Binding var selectedDate: Date
-    @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     
     let windowWidth: CGFloat = UIScreen.main.bounds.width
@@ -85,7 +83,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.leading)
                     Spacer()
                 }
-//                .frame(width: windowWidth)
                 HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
@@ -95,8 +92,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-//                .frame(width: windowWidth)
-                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.mothsCount ,pageWidth: windowWidth, tileWidth: windowWidth){
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count ,pageWidth: windowWidth, tileWidth: windowWidth){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
@@ -127,11 +123,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-//                .frame(width: windowWidth * CGFloat(mothsCount))
-//                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
-            }
-            .onAppear(){
-                mothsCount = viewModel.months.count
             }
         }
     }
@@ -278,7 +269,7 @@ struct CalendarView_Previews: PreviewProvider {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400), mothsCount: $mothsCount) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400)) { date in
                 
                 NoramalDayCell(date: date)
             }
