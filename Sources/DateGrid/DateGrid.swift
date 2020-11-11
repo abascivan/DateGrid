@@ -246,7 +246,8 @@ struct PagingScrollView: View {
                 }
             }
             .onAppear {
-                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
+//                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
+                self.currentScrollOffset = 0
             }
 //            .offset(x: self.stackOffset, y: 0)
             .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
