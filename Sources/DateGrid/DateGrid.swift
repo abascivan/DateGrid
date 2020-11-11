@@ -141,7 +141,7 @@ public struct DateGrid<DateView>: View where DateView: View {
 
 struct PagingScrollView: View {
     let items: [AnyView]
-
+    
     init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, @ViewBuilder content: () -> A) {
         let views = content()
         self.items = [AnyView(views)]
@@ -210,15 +210,15 @@ struct PagingScrollView: View {
         return (trueOffset) * -1.0
     }
     
-   
+    
     var body: some View {
         GeometryReader { outerGeometry in
             HStack {
                 /// building items into HStack
                 ForEach(0..<self.items.count) { index in
                     
-                        self.items[index]
-                            .scaledToFill()
+                    self.items[index]
+                        .scaledToFill()
                     
                 }
             }
@@ -230,20 +230,20 @@ struct PagingScrollView: View {
             .frame(width: self.contentWidth)
             .offset(x: self.currentScrollOffset, y: 0)
             .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
-                .onChanged { value in
-                    self.dragOffset = value.translation.width
-                    self.currentScrollOffset = self.computeCurrentScrollOffset()
-                }
-                .onEnded { value in
-                    // compute nearest index
-                    let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
-                    let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
-                    self.dragOffset = 0
-//                    withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 1.5, initialVelocity: 0)){
-                        self.activePageIndex = newPageIndex
-                        self.currentScrollOffset = self.computeCurrentScrollOffset()
-//                    }
-                }
+                                    .onChanged { value in
+                                        self.dragOffset = value.translation.width
+                                        self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                    }
+                                    .onEnded { value in
+                                        // compute nearest index
+                                        let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
+                                        let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
+                                        self.dragOffset = 0
+                                        withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
+                                            self.activePageIndex = newPageIndex
+                                            self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                        }
+                                    }
             )
         }
     }
