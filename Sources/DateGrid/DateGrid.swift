@@ -19,30 +19,17 @@ public struct DateGrid<DateView>: View where DateView: View {
         self._selectedMonth = selectedMonth
         self.content = content
         self._selectedDate = selectedDate
-        
-        self.itemCount = viewModel.months.count
-        self.contentWidth = (windowWidth)*CGFloat(self.itemCount)
-        self.stackOffset = contentWidth/2 - windowWidth/2
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
     let tilePadding: CGFloat = 20
+    @State private var activePageIndex: Int = 0
     @Binding var selectedMonth: Date
     @Binding var selectedDate: Date
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     
-    //PagingScrollView
-    @State private var activePageIndex: Int = 0
-    
     let windowWidth: CGFloat = UIScreen.main.bounds.width
-    
-    private let contentWidth : CGFloat
-    private let stackOffset : CGFloat // to fix center alignment
-    private let itemCount : Int
-    private let scrollDampingFactor: CGFloat = 0.66
-    @State var currentScrollOffset: CGFloat = 0
-    @State private var dragOffset : CGFloat = 0
     
     public var body: some View {
         
@@ -105,62 +92,36 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                //                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count)
-                GeometryReader { outerGeometry in
-                    HStack {
-                        ForEach(viewModel.months, id: \.self) { month in
-                            VStack {
-                                ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-                                    HStack {
-                                        Spacer()
-                                        ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                            if j < viewModel.days(for: month).count {
-                                                if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
-                                                    content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
-                                                        .background(
-                                                            GeometryReader(){ proxy in
-                                                                Color.clear
-                                                                    .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                            }
-                                                        )
-                                                        .onTapGesture {
-                                                            selectedDate = viewModel.days(for: month)[j]
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count){
+                    ForEach(viewModel.months, id: \.self) { month in
+                        VStack {
+                            ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                                HStack {
+                                    Spacer()
+                                    ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                        if j < viewModel.days(for: month).count {
+                                            if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
+                                                content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
+                                                    .background(
+                                                        GeometryReader(){ proxy in
+                                                            Color.clear
+                                                                .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                         }
-                                                    
-                                                } else {
-                                                    content(viewModel.days(for: month)[j]).hidden()
-                                                }
+                                                    )
+                                                    .onTapGesture {
+                                                        selectedDate = viewModel.days(for: month)[j]
+                                                    }
+                                                
+                                            } else {
+                                                content(viewModel.days(for: month)[j]).hidden()
                                             }
-                                            Spacer()
                                         }
+                                        Spacer()
                                     }
                                 }
                             }
                         }
                     }
-                    .onAppear {
-                        self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
-                    }
-                    .offset(x: self.stackOffset, y: 0)
-                    .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
-                    .frame(width: self.contentWidth)
-                    .offset(x: self.currentScrollOffset, y: 0)
-                    .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
-                                            .onChanged { value in
-                                                self.dragOffset = value.translation.width
-                                                self.currentScrollOffset = self.computeCurrentScrollOffset()
-                                            }
-                                            .onEnded { value in
-                                                // compute nearest index
-                                                let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
-                                                let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
-                                                self.dragOffset = 0
-                                                withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
-                                                    self.activePageIndex = newPageIndex
-                                                    self.currentScrollOffset = self.computeCurrentScrollOffset()
-                                                }
-                                            }
-                    )
                 }
             }
         }
@@ -176,8 +137,45 @@ public struct DateGrid<DateView>: View where DateView: View {
     var weekContentHeight: CGFloat {
         return max(viewModel.mode.estimateHeight, calculatedCellSize.height * 1)
     }
+}
+
+struct PagingScrollView: View {
+    let items: [AnyView]
     
-    //PagingScrollView
+    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, @ViewBuilder content: () -> A) {
+        let views = content()
+        self.items = [AnyView(views)]
+        
+        self._activePageIndex = activePageIndex
+        self.itemCount = itemCount
+        self.contentWidth = (windowWidth)*CGFloat(self.itemCount)
+        self.stackOffset = contentWidth/2 - windowWidth/2
+    }
+    
+    /// index of current page 0..N-1
+    @Binding var activePageIndex : Int
+    
+    let windowWidth: CGFloat = UIScreen.main.bounds.width
+    
+    /// total width of conatiner
+    private let contentWidth : CGFloat
+    
+    /// since the hstack is centered by default this offset actualy moves it entirely to the left
+    private let stackOffset : CGFloat // to fix center alignment
+    
+    /// number of items; I did not come with the soluion of extracting the right count in initializer
+    private let itemCount : Int
+    
+    /// some damping factor to reduce liveness
+    private let scrollDampingFactor: CGFloat = 0.66
+    
+    /// current offset of all items
+    @State var currentScrollOffset: CGFloat = 0
+    
+    /// drag offset during drag gesture
+    @State private var dragOffset : CGFloat = 0
+    
+    
     func offsetForPageIndex(_ index: Int)->CGFloat {
         let activePageOffset = CGFloat(index)*(windowWidth)
         
@@ -204,20 +202,45 @@ public struct DateGrid<DateView>: View where DateView: View {
     func logicalScrollOffset(trueOffset: CGFloat)->CGFloat {
         return (trueOffset) * -1.0
     }
+    
+    
+    var body: some View {
+        GeometryReader { outerGeometry in
+            HStack {
+                /// building items into HStack
+                ForEach(0..<self.items.count) { index in
+                    
+                    self.items[index]
+                        .scaledToFill()
+                    
+                }
+            }
+            .onAppear {
+                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
+            }
+            .offset(x: self.stackOffset, y: 0)
+            .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
+            .frame(width: self.contentWidth)
+            .offset(x: self.currentScrollOffset, y: 0)
+            .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
+                                    .onChanged { value in
+                                        self.dragOffset = value.translation.width
+                                        self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                    }
+                                    .onEnded { value in
+                                        // compute nearest index
+                                        let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
+                                        let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
+                                        self.dragOffset = 0
+                                        withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
+                                            self.activePageIndex = newPageIndex
+                                            self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                        }
+                                    }
+            )
+        }
+    }
 }
-
-//struct PagingScrollView: View {
-//    let items: [AnyView]
-//
-//
-//
-//
-//
-//
-//    var body: some View {
-//
-//    }
-//}
 
 struct CalendarView_Previews: PreviewProvider {
     
