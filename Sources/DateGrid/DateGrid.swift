@@ -165,7 +165,7 @@ struct PagingScrollView: View {
         self.contentWidth = (tileWidth+tilePadding)*CGFloat(self.itemCount)
         
         self.leadingOffset = 0
-//        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
+        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
     }
     
     /// index of current page 0..N-1
@@ -190,7 +190,7 @@ struct PagingScrollView: View {
     private let leadingOffset : CGFloat
     
     /// since the hstack is centered by default this offset actualy moves it entirely to the left
-//    private let stackOffset : CGFloat // to fix center alignment
+    private let stackOffset : CGFloat // to fix center alignment
     
     /// number of items; I did not come with the soluion of extracting the right count in initializer
     private let itemCount : Int
@@ -211,8 +211,7 @@ struct PagingScrollView: View {
         
         print("leadingOffset \(leadingOffset)")
         print("return \(leadingOffset - activePageOffset)")
-//        return self.leadingOffset - activePageOffset
-        return self.leadingOffset + (2 * 375)
+        return self.leadingOffset - activePageOffset
     }
     
     func indexPageForOffset(_ offset : CGFloat) -> Int {
@@ -251,7 +250,7 @@ struct PagingScrollView: View {
             .onAppear {
                 self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
             }
-//            .offset(x: self.stackOffset, y: 0)
+            .offset(x: self.stackOffset, y: 0)
             .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
             .frame(width: self.contentWidth)
             .offset(x: self.currentScrollOffset, y: 0)
