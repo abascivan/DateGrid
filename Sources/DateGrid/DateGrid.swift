@@ -160,12 +160,12 @@ struct PagingScrollView: View {
         self.pageWidth = pageWidth
         self.tileWidth = tileWidth
         self.tilePadding = tilePadding
-        self.tileRemain = 0
+        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
         self.itemCount = itemCount
         self.contentWidth = (tileWidth+tilePadding)*CGFloat(self.itemCount)
         
         self.leadingOffset = tileRemain+tilePadding
-        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
+//        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
     }
     
     /// index of current page 0..N-1
@@ -190,7 +190,7 @@ struct PagingScrollView: View {
     private let leadingOffset : CGFloat
     
     /// since the hstack is centered by default this offset actualy moves it entirely to the left
-    private let stackOffset : CGFloat // to fix center alignment
+//    private let stackOffset : CGFloat // to fix center alignment
     
     /// number of items; I did not come with the soluion of extracting the right count in initializer
     private let itemCount : Int
