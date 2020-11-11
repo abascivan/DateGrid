@@ -152,8 +152,6 @@ struct PagingScrollView: View {
         self.tileWidth = UIScreen.main.bounds.width
         self.itemCount = itemCount
         self.contentWidth = (tileWidth)*CGFloat(self.itemCount)
-        
-        self.leadingOffset = 0
         self.stackOffset = contentWidth/2 - pageWidth/2
     }
     
@@ -168,9 +166,6 @@ struct PagingScrollView: View {
     
     /// total width of conatiner
     private let contentWidth : CGFloat
-    
-    /// offset to scroll on the first item
-    private let leadingOffset : CGFloat
     
     /// since the hstack is centered by default this offset actualy moves it entirely to the left
     private let stackOffset : CGFloat // to fix center alignment
@@ -191,7 +186,7 @@ struct PagingScrollView: View {
     func offsetForPageIndex(_ index: Int)->CGFloat {
         let activePageOffset = CGFloat(index)*(tileWidth)
         
-        return self.leadingOffset - activePageOffset
+        return -activePageOffset
     }
     
     func indexPageForOffset(_ offset : CGFloat) -> Int {
@@ -212,7 +207,7 @@ struct PagingScrollView: View {
     
     /// logical offset startin at 0 for the first item - this makes computing the page index easier
     func logicalScrollOffset(trueOffset: CGFloat)->CGFloat {
-        return (trueOffset-leadingOffset) * -1.0
+        return (trueOffset) * -1.0
     }
     
    
