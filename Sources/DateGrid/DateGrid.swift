@@ -96,7 +96,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
 //                .frame(width: windowWidth)
-                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.mothsCount ,pageWidth: windowWidth, tileWidth: windowWidth, tilePadding: 0){
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: self.mothsCount ,pageWidth: windowWidth, tileWidth: windowWidth){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
@@ -231,7 +231,7 @@ struct PagingScrollView: View {
    
     var body: some View {
         GeometryReader { outerGeometry in
-            HStack {
+            HStack(alignment: .center, spacing: 0)  {
                 /// building items into HStack
                 ForEach(0..<self.items.count) { index in
                     
