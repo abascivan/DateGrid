@@ -77,7 +77,6 @@ public struct DateGrid<DateView>: View where DateView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
             VStack{
-                Text("\(selectedDate)")
                 HStack {
                     Text(DateFormatter.monthAndYear.string(from: selectedDate))
                         .font(.headline)
@@ -152,7 +151,7 @@ public struct DateGrid<DateView>: View where DateView: View {
 struct PagingScrollView: View {
     let items: [AnyView]
 
-    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, pageWidth:CGFloat, tileWidth:CGFloat, tilePadding: CGFloat, @ViewBuilder content: () -> A) {
+    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, pageWidth:CGFloat, tileWidth:CGFloat, @ViewBuilder content: () -> A) {
         let views = content()
         self.items = [AnyView(views)]
         
@@ -160,13 +159,12 @@ struct PagingScrollView: View {
         
         self.pageWidth = pageWidth
         self.tileWidth = tileWidth
-        self.tilePadding = tilePadding
 //        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
         self.itemCount = itemCount
-        self.contentWidth = (tileWidth+tilePadding)*CGFloat(self.itemCount)
+        self.contentWidth = (tileWidth)*CGFloat(self.itemCount)
         
         self.leadingOffset = 0
-        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
+        self.stackOffset = contentWidth/2 - pageWidth/2
     }
     
     /// index of current page 0..N-1
@@ -177,9 +175,6 @@ struct PagingScrollView: View {
     
     /// width of item / tile
     let tileWidth : CGFloat
-    
-    /// padding between items
-    private let tilePadding : CGFloat
     
     /// how much of surrounding iems is still visible
 //    private let tileRemain : CGFloat
@@ -207,11 +202,8 @@ struct PagingScrollView: View {
     
     
     func offsetForPageIndex(_ index: Int)->CGFloat {
-        print("offsetForPageIndex tileWidth: \(tileWidth) tilePadding \(tilePadding)")
-        let activePageOffset = CGFloat(index)*(tileWidth+tilePadding)
+        let activePageOffset = CGFloat(index)*(tileWidth)
         
-        print("leadingOffset \(leadingOffset)")
-        print("return \(leadingOffset - activePageOffset)")
         return self.leadingOffset - activePageOffset
     }
     
@@ -220,7 +212,7 @@ struct PagingScrollView: View {
             return 0
         }
         let offset = self.logicalScrollOffset(trueOffset: offset)
-        let floatIndex = (offset)/(tileWidth+tilePadding)
+        let floatIndex = (offset)/(tileWidth)
         var computedIndex = Int(round(floatIndex))
         computedIndex = max(computedIndex, 0)
         return min(computedIndex, self.itemCount-1)
@@ -239,7 +231,7 @@ struct PagingScrollView: View {
    
     var body: some View {
         GeometryReader { outerGeometry in
-            HStack(alignment: .center, spacing: self.tilePadding)  {
+            HStack {
                 /// building items into HStack
                 ForEach(0..<self.items.count) { index in
                     
