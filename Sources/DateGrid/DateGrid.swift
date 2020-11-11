@@ -109,6 +109,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                         }
                                                     )
                                                     .onTapGesture {
+                                                        print("selected \(viewModel.days(for: month)[j])")
                                                         selectedDate = viewModel.days(for: month)[j]
                                                     }
                                                 
