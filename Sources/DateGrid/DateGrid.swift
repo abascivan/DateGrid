@@ -29,6 +29,8 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var selectedDate: Date
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     
+    //PagingScrollView
+    
     let windowWidth: CGFloat = UIScreen.main.bounds.width
     
     public var body: some View {
@@ -152,29 +154,16 @@ struct PagingScrollView: View {
         self.stackOffset = contentWidth/2 - windowWidth/2
     }
     
-    /// index of current page 0..N-1
     @Binding var activePageIndex : Int
     
     let windowWidth: CGFloat = UIScreen.main.bounds.width
     
-    /// total width of conatiner
     private let contentWidth : CGFloat
-    
-    /// since the hstack is centered by default this offset actualy moves it entirely to the left
     private let stackOffset : CGFloat // to fix center alignment
-    
-    /// number of items; I did not come with the soluion of extracting the right count in initializer
     private let itemCount : Int
-    
-    /// some damping factor to reduce liveness
     private let scrollDampingFactor: CGFloat = 0.66
-    
-    /// current offset of all items
     @State var currentScrollOffset: CGFloat = 0
-    
-    /// drag offset during drag gesture
     @State private var dragOffset : CGFloat = 0
-    
     
     func offsetForPageIndex(_ index: Int)->CGFloat {
         let activePageOffset = CGFloat(index)*(windowWidth)
