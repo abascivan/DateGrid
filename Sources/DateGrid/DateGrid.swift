@@ -231,7 +231,7 @@ struct PagingScrollView: View {
    
     var body: some View {
         GeometryReader { outerGeometry in
-            HStack(alignment: .center, spacing: 0)  {
+            HStack {
                 /// building items into HStack
                 ForEach(0..<self.items.count) { index in
                     
