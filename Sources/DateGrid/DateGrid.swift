@@ -160,11 +160,11 @@ struct PagingScrollView: View {
         self.pageWidth = pageWidth
         self.tileWidth = tileWidth
         self.tilePadding = tilePadding
-        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
+//        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
         self.itemCount = itemCount
         self.contentWidth = (tileWidth+tilePadding)*CGFloat(self.itemCount)
         
-        self.leadingOffset = tileRemain+tilePadding
+        self.leadingOffset = 0
 //        self.stackOffset = contentWidth/2 - pageWidth/2 - tilePadding/2
     }
     
@@ -181,7 +181,7 @@ struct PagingScrollView: View {
     private let tilePadding : CGFloat
     
     /// how much of surrounding iems is still visible
-    private let tileRemain : CGFloat
+//    private let tileRemain : CGFloat
     
     /// total width of conatiner
     private let contentWidth : CGFloat
@@ -246,8 +246,7 @@ struct PagingScrollView: View {
                 }
             }
             .onAppear {
-//                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
-                self.currentScrollOffset = 0
+                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
             }
 //            .offset(x: self.stackOffset, y: 0)
             .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
