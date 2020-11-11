@@ -30,7 +30,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var selectedDate: Date
     @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
-    @State var offset: CGFloat = 0
+//    @State var offset: CGFloat = 0
     
     let windowWidth: CGFloat = UIScreen.main.bounds.width
     
@@ -85,21 +85,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.vertical)
                         .padding(.leading)
                     Spacer()
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset -= windowWidth
-                        }
-                    }) {
-                        Image(systemName: "chevron.left")
-                    }
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset += windowWidth
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                    }
-                    .padding(.trailing)
                 }
 //                .frame(width: windowWidth)
                 HStack {
