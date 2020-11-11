@@ -211,7 +211,8 @@ struct PagingScrollView: View {
         
         print("leadingOffset \(leadingOffset)")
         print("return \(leadingOffset - activePageOffset)")
-        return self.leadingOffset - activePageOffset
+//        return self.leadingOffset - activePageOffset
+        return self.leadingOffset + (2 * 375)
     }
     
     func indexPageForOffset(_ offset : CGFloat) -> Int {
