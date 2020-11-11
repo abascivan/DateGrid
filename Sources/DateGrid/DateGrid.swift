@@ -77,6 +77,7 @@ public struct DateGrid<DateView>: View where DateView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
             VStack{
+                Text("\(selectedDate)")
                 HStack {
                     Text(DateFormatter.monthAndYear.string(from: selectedDate))
                         .font(.headline)
