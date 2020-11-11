@@ -147,22 +147,15 @@ struct PagingScrollView: View {
         self.items = [AnyView(views)]
         
         self._activePageIndex = activePageIndex
-        
-        self.pageWidth = UIScreen.main.bounds.width
-        self.tileWidth = UIScreen.main.bounds.width
         self.itemCount = itemCount
-        self.contentWidth = (tileWidth)*CGFloat(self.itemCount)
-        self.stackOffset = contentWidth/2 - pageWidth/2
+        self.contentWidth = (windowWidth)*CGFloat(self.itemCount)
+        self.stackOffset = contentWidth/2 - windowWidth/2
     }
     
     /// index of current page 0..N-1
     @Binding var activePageIndex : Int
     
-    /// pageWidth==frameWidth used to properly compute offsets
-    let pageWidth: CGFloat
-    
-    /// width of item / tile
-    let tileWidth : CGFloat
+    let windowWidth: CGFloat = UIScreen.main.bounds.width
     
     /// total width of conatiner
     private let contentWidth : CGFloat
@@ -184,7 +177,7 @@ struct PagingScrollView: View {
     
     
     func offsetForPageIndex(_ index: Int)->CGFloat {
-        let activePageOffset = CGFloat(index)*(tileWidth)
+        let activePageOffset = CGFloat(index)*(windowWidth)
         
         return -activePageOffset
     }
@@ -194,7 +187,7 @@ struct PagingScrollView: View {
             return 0
         }
         let offset = self.logicalScrollOffset(trueOffset: offset)
-        let floatIndex = (offset)/(tileWidth)
+        let floatIndex = (offset)/(windowWidth)
         var computedIndex = Int(round(floatIndex))
         computedIndex = max(computedIndex, 0)
         return min(computedIndex, self.itemCount-1)
