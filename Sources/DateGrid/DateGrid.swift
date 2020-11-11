@@ -194,38 +194,40 @@ struct PagingScrollView: View {
     
     
     var body: some View {
-        HStack {
-            /// building items into HStack
-            ForEach(0..<self.items.count) { index in
-                
-                self.items[index]
-                    .scaledToFill()
-                
+        GeometryReader { outerGeometry in
+            HStack {
+                /// building items into HStack
+                ForEach(0..<self.items.count) { index in
+                    
+                    self.items[index]
+                        .scaledToFill()
+                    
+                }
             }
-        }
-        .onAppear {
-            self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
-        }
-        .offset(x: self.stackOffset, y: 0)
-        .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
-        .frame(width: self.contentWidth)
-        .offset(x: self.currentScrollOffset, y: 0)
-        .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
-                                .onChanged { value in
-                                    self.dragOffset = value.translation.width
-                                    self.currentScrollOffset = self.computeCurrentScrollOffset()
-                                }
-                                .onEnded { value in
-                                    // compute nearest index
-                                    let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
-                                    let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
-                                    self.dragOffset = 0
-                                    withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
-                                        self.activePageIndex = newPageIndex
+            .onAppear {
+                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
+            }
+            .offset(x: self.stackOffset, y: 0)
+            .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
+            .frame(width: self.contentWidth)
+            .offset(x: self.currentScrollOffset, y: 0)
+            .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
+                                    .onChanged { value in
+                                        self.dragOffset = value.translation.width
                                         self.currentScrollOffset = self.computeCurrentScrollOffset()
                                     }
-                                }
-        )
+                                    .onEnded { value in
+                                        // compute nearest index
+                                        let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
+                                        let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
+                                        self.dragOffset = 0
+                                        withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
+                                            self.activePageIndex = newPageIndex
+                                            self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                        }
+                                    }
+            )
+        }
     }
 }
 
