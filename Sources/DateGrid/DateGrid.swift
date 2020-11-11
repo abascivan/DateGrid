@@ -92,7 +92,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count ,pageWidth: windowWidth, tileWidth: windowWidth){
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count){
                     ForEach(viewModel.months, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
@@ -142,15 +142,14 @@ public struct DateGrid<DateView>: View where DateView: View {
 struct PagingScrollView: View {
     let items: [AnyView]
 
-    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, pageWidth:CGFloat, tileWidth:CGFloat, @ViewBuilder content: () -> A) {
+    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, @ViewBuilder content: () -> A) {
         let views = content()
         self.items = [AnyView(views)]
         
         self._activePageIndex = activePageIndex
         
-        self.pageWidth = pageWidth
-        self.tileWidth = tileWidth
-//        self.tileRemain = (pageWidth-tileWidth-2*tilePadding)/2
+        self.pageWidth = UIScreen.main.bounds.width
+        self.tileWidth = UIScreen.main.bounds.width
         self.itemCount = itemCount
         self.contentWidth = (tileWidth)*CGFloat(self.itemCount)
         
@@ -166,9 +165,6 @@ struct PagingScrollView: View {
     
     /// width of item / tile
     let tileWidth : CGFloat
-    
-    /// how much of surrounding iems is still visible
-//    private let tileRemain : CGFloat
     
     /// total width of conatiner
     private let contentWidth : CGFloat
