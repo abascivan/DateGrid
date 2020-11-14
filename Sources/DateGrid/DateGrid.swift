@@ -77,24 +77,26 @@ public struct DateGrid<DateView>: View where DateView: View {
         } else {
             VStack{
                 HStack {
-                    Text(DateFormatter.monthAndYear.string(from: selectedDate))
+                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
                         .font(.headline)
                         .fontWeight(.bold)
                         .padding(.vertical)
                         .padding(.leading)
                     Spacer()
                     Button(action: {
-                        print("prev")
+                        NSLog("prev")
                         withAnimation(.easeInOut(duration: 1)) {
                             offset -= windowWidth
+                            selectedMonth = Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth)!
                         }
                     }) {
                         Image(systemName: "chevron.left")
                     }
                     Button(action: {
-                        print("next")
+                        NSLog("next")
                         withAnimation(.easeInOut(duration: 1)) {
                             offset += windowWidth
+                            selectedMonth = Calendar.current.date(byAdding: .month, value: 1, to: selectedMonth)!
                         }
                     }) {
                         Image(systemName: "chevron.right")
@@ -114,14 +116,15 @@ public struct DateGrid<DateView>: View where DateView: View {
                 .frame(width: windowWidth)
                 HStack{
                     ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
+                        let daysForMonth = viewModel.days(for: month)
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                                 HStack {
                                     Spacer()
                                     ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                        if j < viewModel.days(for: month).count {
-                                            if viewModel.calendar.isDate(viewModel.days(for: month)[j], equalTo: month, toGranularity: .month) {
-                                                content(viewModel.days(for: month)[j]).id(viewModel.days(for: month)[j])
+                                        if j < daysForMonth.count {
+                                            if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
+                                                content(daysForMonth[j]).id(daysForMonth[j])
                                                     .background(
                                                         GeometryReader(){ proxy in
                                                             Color.clear
@@ -129,12 +132,11 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                         }
                                                     )
                                                     .onTapGesture {
-                                                        print(viewModel.days(for: month)[j].day)
-                                                        selectedDate = viewModel.days(for: month)[j]
+                                                        selectedDate = daysForMonth[j]
                                                     }
                                                 
                                             } else {
-                                                content(viewModel.days(for: month)[j]).hidden()
+                                                content(daysForMonth[j]).hidden()
                                             }
                                         }
                                         Spacer()
