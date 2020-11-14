@@ -14,30 +14,29 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, mothsCount: Binding<Int>, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
         self._selectedMonth = selectedMonth
         self.content = content
         self._selectedDate = selectedDate
-        self._mothsCount = mothsCount
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
+    let tilePadding: CGFloat = 20
+    @State private var activePageIndex: Int = 0
     @Binding var selectedMonth: Date
     @Binding var selectedDate: Date
-    @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
-    @State var offset: CGFloat = 0
     
-    let windowWidth = UIScreen.main.bounds.width
+    let windowWidth: CGFloat = UIScreen.main.bounds.width
     
     public var body: some View {
         
         if #available(iOS 14.0, *) {
             TabView(selection: $selectedMonth) {
                 
-                ForEach(viewModel.months, id: \.self) { month in
+                ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                     
                     VStack {
                         
@@ -83,25 +82,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.vertical)
                         .padding(.leading)
                     Spacer()
-                    Button(action: {
-                        print("prev")
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset -= windowWidth
-                        }
-                    }) {
-                        Image(systemName: "chevron.left")
-                    }
-                    Button(action: {
-                        print("next")
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset += windowWidth
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                    }
-                    .padding(.trailing)
                 }
-                .frame(width: windowWidth)
                 HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
@@ -111,9 +92,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                .frame(width: windowWidth)
-                HStack{
-                    ForEach(viewModel.months, id: \.self) { month in
+                PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.mainDatesOfAPage.count){
+                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                                 HStack {
@@ -129,7 +109,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                         }
                                                     )
                                                     .onTapGesture {
-                                                        print(viewModel.days(for: month)[j].day)
+                                                        print("selected \(viewModel.days(for: month)[j])")
                                                         selectedDate = viewModel.days(for: month)[j]
                                                     }
                                                 
@@ -144,11 +124,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                         }
                     }
                 }
-                .frame(width: windowWidth * CGFloat(mothsCount))
-                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
-            }
-            .onAppear(){
-                mothsCount = viewModel.months.count
             }
         }
     }
@@ -165,6 +140,109 @@ public struct DateGrid<DateView>: View where DateView: View {
     }
 }
 
+struct PagingScrollView: View {
+    let items: [AnyView]
+    
+    init<A: View>(activePageIndex:Binding<Int>, itemCount: Int, @ViewBuilder content: () -> A) {
+        let views = content()
+        self.items = [AnyView(views)]
+        
+        self._activePageIndex = activePageIndex
+        self.itemCount = itemCount
+        self.contentWidth = (windowWidth)*CGFloat(self.itemCount)
+        self.stackOffset = contentWidth/2 - windowWidth/2
+    }
+    
+    /// index of current page 0..N-1
+    @Binding var activePageIndex : Int
+    
+    let windowWidth: CGFloat = UIScreen.main.bounds.width
+    
+    /// total width of conatiner
+    private let contentWidth : CGFloat
+    
+    /// since the hstack is centered by default this offset actualy moves it entirely to the left
+    private let stackOffset : CGFloat // to fix center alignment
+    
+    /// number of items; I did not come with the soluion of extracting the right count in initializer
+    private let itemCount : Int
+    
+    /// some damping factor to reduce liveness
+    private let scrollDampingFactor: CGFloat = 0.66
+    
+    /// current offset of all items
+    @State var currentScrollOffset: CGFloat = 0
+    
+    /// drag offset during drag gesture
+    @State private var dragOffset : CGFloat = 0
+    
+    
+    func offsetForPageIndex(_ index: Int)->CGFloat {
+        let activePageOffset = CGFloat(index)*(windowWidth)
+        
+        return -activePageOffset
+    }
+    
+    func indexPageForOffset(_ offset : CGFloat) -> Int {
+        guard self.itemCount>0 else {
+            return 0
+        }
+        let offset = self.logicalScrollOffset(trueOffset: offset)
+        let floatIndex = (offset)/(windowWidth)
+        var computedIndex = Int(round(floatIndex))
+        computedIndex = max(computedIndex, 0)
+        return min(computedIndex, self.itemCount-1)
+    }
+    
+    /// current scroll offset applied on items
+    func computeCurrentScrollOffset()->CGFloat {
+        return self.offsetForPageIndex(self.activePageIndex) + self.dragOffset
+    }
+    
+    /// logical offset startin at 0 for the first item - this makes computing the page index easier
+    func logicalScrollOffset(trueOffset: CGFloat)->CGFloat {
+        return (trueOffset) * -1.0
+    }
+    
+    
+    var body: some View {
+        GeometryReader { outerGeometry in
+            HStack {
+                /// building items into HStack
+                ForEach(0..<self.items.count) { index in
+                    
+                    self.items[index]
+                        .scaledToFill()
+                    
+                }
+            }
+            .onAppear {
+                self.currentScrollOffset = self.offsetForPageIndex(self.activePageIndex)
+            }
+            .offset(x: self.stackOffset, y: 0)
+            .background(Color.black.opacity(0.00001)) // hack - this allows gesture recognizing even when background is transparent
+            .frame(width: self.contentWidth)
+            .offset(x: self.currentScrollOffset, y: 0)
+            .simultaneousGesture( DragGesture(minimumDistance: 1, coordinateSpace: .local) // can be changed to simultaneous gesture to work with buttons
+                                    .onChanged { value in
+                                        self.dragOffset = value.translation.width
+                                        self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                    }
+                                    .onEnded { value in
+                                        // compute nearest index
+                                        let velocityDiff = (value.predictedEndTranslation.width - self.dragOffset)*self.scrollDampingFactor
+                                        let newPageIndex = self.indexPageForOffset(self.currentScrollOffset+velocityDiff)
+                                        self.dragOffset = 0
+                                        withAnimation(.interpolatingSpring(mass: 0.1, stiffness: 20, damping: 100, initialVelocity: 0)){
+                                            self.activePageIndex = newPageIndex
+                                            self.currentScrollOffset = self.computeCurrentScrollOffset()
+                                        }
+                                    }
+            )
+        }
+    }
+}
+
 struct CalendarView_Previews: PreviewProvider {
     
     @State static var selectedMonthDate = Date()
@@ -176,7 +254,7 @@ struct CalendarView_Previews: PreviewProvider {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400), mothsCount: $mothsCount) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400)) { date in
                 
                 NoramalDayCell(date: date)
             }
