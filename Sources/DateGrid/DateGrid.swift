@@ -36,7 +36,7 @@ public struct DateGrid<DateView>: View where DateView: View {
         if #available(iOS 14.0, *) {
             TabView(selection: $selectedMonth) {
                 
-                ForEach(viewModel.months, id: \.self) { month in
+                ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                     
                     VStack {
                         
@@ -93,7 +93,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
                 PagingScrollView(activePageIndex: self.$activePageIndex, itemCount: viewModel.months.count){
-                    ForEach(viewModel.months, id: \.self) { month in
+                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                         VStack {
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                                 HStack {
