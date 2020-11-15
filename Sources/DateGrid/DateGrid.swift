@@ -14,18 +14,16 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>, selectedDate: Binding<Date>, mode: CalenderMode, mothsCount: Binding<Int>, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval, selectedMonth: Binding<Date>,  mode: CalenderMode, mothsCount: Binding<Int>, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
         self._selectedMonth = selectedMonth
         self.content = content
-        self._selectedDate = selectedDate
         self._mothsCount = mothsCount
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
     @Binding var selectedMonth: Date
-    @Binding var selectedDate: Date
     @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     @State var index = 0
@@ -52,16 +50,13 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                     .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                             }
                                         )
-                                        .onTapGesture {
-                                            selectedDate = date
-                                        }
                                     
                                 } else {
                                     content(date).hidden()
                                 }
                             }
                         }
-                        .padding(.vertical, 5)
+//                        .padding(.vertical, 5)
                         .onPreferenceChange(MyPreferenceKey.self, perform: { value in
                             calculatedCellSize = value.size
                         })
@@ -93,12 +88,11 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                ModelPages(viewModel.mainDatesOfAPage, currentPage: $index) { pageIndex, month in
+                ModelPages(viewModel.mainDatesOfAPage, currentPage: $index, hasControl: false) { pageIndex, month in
                     VStack {
                         let daysForMonth = viewModel.days(for: month)
                         ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                             HStack {
-                                Spacer()
                                 ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
                                     if j < daysForMonth.count {
                                         if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
@@ -107,24 +101,22 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                     GeometryReader(){ proxy in
                                                         Color.clear
                                                             .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                            .onAppear(){
+                                                                calculatedCellSize = proxy.size
+                                                            }
                                                     }
                                                 )
-                                                .onTapGesture {
-                                                    withAnimation(.none){
-                                                        selectedDate = daysForMonth[j]
-                                                    }
-                                                }
                                             
                                         } else {
                                             content(daysForMonth[j]).hidden()
                                         }
                                     }
-                                    Spacer()
                                 }
                             }
                         }
                     }
                 }
+                .frame(height: tabViewHeight, alignment: .center)
             }
             .onAppear(){
                 mothsCount = viewModel.mainDatesOfAPage.count
@@ -155,7 +147,7 @@ struct CalendarView_Previews: PreviewProvider {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, selectedDate: $selectedDate, mode: .month(estimateHeight: 400), mothsCount: $mothsCount) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, mode: .month(estimateHeight: 400), mothsCount: $mothsCount) { date in
                 
                 NoramalDayCell(date: date)
             }

@@ -20,7 +20,7 @@ class DateGridViewModel {
     
     //total dates belong to month(indate+ outDate) or week
     var mainDatesOfAPage: [Date] {
-        NSLog("mainDatesOfAPage")
+//        NSLog("mainDatesOfAPage")
         switch mode {
         case .month(estimateHeight: _):
            return months
@@ -30,17 +30,17 @@ class DateGridViewModel {
     }
     
     private var months: [Date] {
-        NSLog("months")
+//        NSLog("months")
         return calendar.generateDates( inside: interval,matching: DateComponents(day: 1, hour: 0, minute: 0, second:0))
     }
     
     private var weeks: [Date] {
-        NSLog("weeks")
+//        NSLog("weeks")
         return calendar.generateDates( inside: interval,matching: DateComponents(hour: 0, minute: 0, second:0, weekday: 2) )
     }
     
     func days(for month: Date) -> [Date] {
-        NSLog("daysForMonth \(month)")
+//        NSLog("daysForMonth \(month)")
         guard
             let monthInterval = calendar.dateInterval(of: .month, for: month),
             let monthFirstWeek = calendar.dateInterval(of: .weekOfMonth, for: monthInterval.start),
@@ -52,7 +52,7 @@ class DateGridViewModel {
     
     //fixme: change method signature to match aove
     func days(forWeek: Date) -> [Date] {
-        NSLog("daysForWeek \(forWeek)")
+//        NSLog("daysForWeek \(forWeek)")
         guard
             let weekInterval = calendar.dateInterval(of: .weekOfMonth, for: forWeek)
         else { return [] }

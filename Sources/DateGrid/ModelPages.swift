@@ -79,7 +79,7 @@ public struct ModelPages<Data, Content>: View where Data: RandomAccessCollection
     public init(
         _ items: Data,
         currentPage: Binding<Int>,
-        navigationOrientation: UIPageViewController.NavigationOrientation = .horizontal,
+        navigationOrientation: UIPageViewController.NavigationOrientation = .vertical,
         transitionStyle: UIPageViewController.TransitionStyle = .scroll,
         bounce: Bool = true,
         wrap: Bool = false,
