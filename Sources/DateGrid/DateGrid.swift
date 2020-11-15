@@ -14,19 +14,17 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>,  mode: CalenderMode, mothsCount: Binding<Int>, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval, selectedMonth: Binding<Date>,  mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
         self._selectedMonth = selectedMonth
         self.content = content
-        self._mothsCount = mothsCount
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
     @Binding var selectedMonth: Date
-    @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
-    @State var index = 0
+    @State var index = 1
     
     let windowWidth = UIScreen.main.bounds.width
     
@@ -118,9 +116,6 @@ public struct DateGrid<DateView>: View where DateView: View {
                 }
                 .frame(height: tabViewHeight, alignment: .center)
             }
-            .onAppear(){
-                mothsCount = viewModel.mainDatesOfAPage.count
-            }
         }
     }
     
@@ -147,7 +142,7 @@ struct CalendarView_Previews: PreviewProvider {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, mode: .month(estimateHeight: 400), mothsCount: $mothsCount) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, mode: .month(estimateHeight: 400)) { date in
                 
                 NoramalDayCell(date: date)
             }
