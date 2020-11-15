@@ -94,37 +94,36 @@ public struct DateGrid<DateView>: View where DateView: View {
                     }
                 }
                 ModelPages(viewModel.mainDatesOfAPage, currentPage: $index) { pageIndex, month in
-                        VStack {
-                            let daysForMonth = viewModel.days(for: month)
-                            ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-                                HStack {
-                                    Spacer()
-                                    ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                        if j < daysForMonth.count {
-                                            if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
-                                                content(daysForMonth[j]).id(daysForMonth[j])
-                                                    .background(
-                                                        GeometryReader(){ proxy in
-                                                            Color.clear
-                                                                .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                                        }
-                                                    )
-                                                    .onTapGesture {
-                                                        withAnimation(.none){
-                                                            selectedDate = daysForMonth[j]
-                                                        }
+                    VStack {
+                        let daysForMonth = viewModel.days(for: month)
+                        ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                            HStack {
+                                Spacer()
+                                ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                    if j < daysForMonth.count {
+                                        if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
+                                            content(daysForMonth[j]).id(daysForMonth[j])
+                                                .background(
+                                                    GeometryReader(){ proxy in
+                                                        Color.clear
+                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                     }
-
-                                            } else {
-                                                content(daysForMonth[j]).hidden()
-                                            }
+                                                )
+                                                .onTapGesture {
+                                                    withAnimation(.none){
+                                                        selectedDate = daysForMonth[j]
+                                                    }
+                                                }
+                                            
+                                        } else {
+                                            content(daysForMonth[j]).hidden()
                                         }
-                                        Spacer()
                                     }
+                                    Spacer()
                                 }
                             }
                         }
-//                    }
+                    }
                 }
             }
             .onAppear(){
