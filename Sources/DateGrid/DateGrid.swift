@@ -29,6 +29,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     @Binding var mothsCount: Int
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     @State var offset: CGFloat = 0
+    @State var index = 0
     
     let windowWidth = UIScreen.main.bounds.width
     
@@ -83,27 +84,27 @@ public struct DateGrid<DateView>: View where DateView: View {
                         .padding(.vertical)
                         .padding(.leading)
                     Spacer()
-                    Button(action: {
-                        NSLog("prev")
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset -= windowWidth
-                            selectedMonth = Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth)!
-                        }
-                    }) {
-                        Image(systemName: "chevron.left")
-                    }
-                    Button(action: {
-                        NSLog("next")
-                        withAnimation(.easeInOut(duration: 1)) {
-                            offset += windowWidth
-                            selectedMonth = Calendar.current.date(byAdding: .month, value: 1, to: selectedMonth)!
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                    }
-                    .padding(.trailing)
+//                    Button(action: {
+//                        NSLog("prev")
+//                        withAnimation(.easeInOut(duration: 1)) {
+//                            offset -= windowWidth
+//                            selectedMonth = Calendar.current.date(byAdding: .month, value: -1, to: selectedMonth)!
+//                        }
+//                    }) {
+//                        Image(systemName: "chevron.left")
+//                    }
+//                    Button(action: {
+//                        NSLog("next")
+//                        withAnimation(.easeInOut(duration: 1)) {
+//                            offset += windowWidth
+//                            selectedMonth = Calendar.current.date(byAdding: .month, value: 1, to: selectedMonth)!
+//                        }
+//                    }) {
+//                        Image(systemName: "chevron.right")
+//                    }
+//                    .padding(.trailing)
                 }
-                .frame(width: windowWidth)
+//                .frame(width: windowWidth)
                 HStack {
                     Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
@@ -113,11 +114,17 @@ public struct DateGrid<DateView>: View where DateView: View {
                         Spacer()
                     }
                 }
-                .frame(width: windowWidth)
-                HStack{
-                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
-                        let daysForMonth = viewModel.days(for: month)
+//                .frame(width: windowWidth)
+//                Pages(currentPage: $index) {
+//                     Text("Welcome! This is Page 1")
+//                     Text("This is Page 2")
+//                     Text("...and this is Page 3")
+//                     Circle() // The 4th page is a Circle
+//                }
+                ModelPages(viewModel.mainDatesOfAPage, currentPage: 0) {currentPage, month in
+//                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                         VStack {
+                            let daysForMonth = viewModel.days(for: month)
                             ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                                 HStack {
                                     Spacer()
@@ -132,9 +139,11 @@ public struct DateGrid<DateView>: View where DateView: View {
                                                         }
                                                     )
                                                     .onTapGesture {
-                                                        selectedDate = daysForMonth[j]
+                                                        withAnimation(.none){
+                                                            selectedDate = daysForMonth[j]
+                                                        }
                                                     }
-                                                
+
                                             } else {
                                                 content(daysForMonth[j]).hidden()
                                             }
@@ -144,10 +153,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                                 }
                             }
                         }
-                    }
+//                    }
                 }
-                .frame(width: windowWidth * CGFloat(mothsCount))
-                .offset(x: (windowWidth * CGFloat(mothsCount - 1) / 2 - CGFloat(offset)))
             }
             .onAppear(){
                 mothsCount = viewModel.mainDatesOfAPage.count
