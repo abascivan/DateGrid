@@ -14,15 +14,14 @@ public struct DateGrid<DateView>: View where DateView: View {
     ///   - interval:
     ///   - selectedMonth: date relevent to showing month, then you can extract the componnets
     ///   - content:
-    public init(interval: DateInterval, selectedMonth: Binding<Date>,  mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
+    public init(interval: DateInterval,  mode: CalenderMode, @ViewBuilder content: @escaping (Date) -> DateView) {
         self.viewModel = .init(interval: interval, mode: mode)
-        self._selectedMonth = selectedMonth
         self.content = content
     }
     
     var viewModel: DateGridViewModel
     let content: (Date) -> DateView
-    @Binding var selectedMonth: Date
+    @State var selectedMonth = Date.getDate(from: "\(Calendar.current.component(.year, from: Date())) \(Calendar.current.component(.month, from: Date())) 01")!
     @State private var calculatedCellSize: CGSize = .init(width: 1, height: 1)
     @State var index = 1
     
@@ -31,42 +30,57 @@ public struct DateGrid<DateView>: View where DateView: View {
     public var body: some View {
         
         if #available(iOS 14.0, *) {
-            TabView(selection: $selectedMonth) {
-                
-                ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
+            VStack {
+                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .padding(.vertical)
+                        .padding(.leading)
+                HStack {
+                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
+                        Text(item)
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .padding(8)
+                    }
+                }
+                TabView(selection: $selectedMonth) {
                     
-                    VStack {
+                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
                         
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                        VStack {
                             
-                            ForEach(viewModel.days(for: month), id: \.self) { date in
-                                if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
-                                    content(date).id(date)
-                                        .background(
-                                            GeometryReader(){ proxy in
-                                                Color.clear
-                                                    .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-                                            }
-                                        )
-                                    
-                                } else {
-                                    content(date).hidden()
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+                                
+                                ForEach(viewModel.days(for: month), id: \.self) { date in
+                                    if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
+                                        content(date).id(date)
+                                            .background(
+                                                GeometryReader(){ proxy in
+                                                    Color.clear
+                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+                                                }
+                                            )
+                                        
+                                    } else {
+                                        content(date).hidden()
+                                    }
                                 }
                             }
+                            //                        .padding(.vertical, 5)
+                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
+                                calculatedCellSize = value.size
+                            })
+                            .tag(month)
+                            //Tab view frame alignment to .Top didnt work dtz y
+                            Spacer()
                         }
-//                        .padding(.vertical, 5)
-                        .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-                            calculatedCellSize = value.size
-                        })
-                        .tag(month)
-                        //Tab view frame alignment to .Top didnt work dtz y
-                        Spacer()
+                        .frame(width: windowWidth)
                     }
-                    .frame(width: windowWidth)
                 }
+                .frame(height: tabViewHeight, alignment: .center)
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
-            .frame(height: tabViewHeight, alignment: .center)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         } else {
             VStack{
                 HStack {
@@ -78,12 +92,11 @@ public struct DateGrid<DateView>: View where DateView: View {
                     Spacer()
                 }
                 HStack {
-                    Spacer()
                     ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
                         Text(item)
-                            .font(.system(.subheadline, design: .monospaced))
-                            .bold()
-                        Spacer()
+                            .font(.headline)
+                            .fontWeight(.bold)
+                            .padding(8)
                     }
                 }
                 ModelPages(viewModel.mainDatesOfAPage, currentPage: $index, hasControl: false) { pageIndex, month in
@@ -92,13 +105,13 @@ public struct DateGrid<DateView>: View where DateView: View {
                         ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
                             HStack {
                                 ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                    Spacer()
                                     if j < daysForMonth.count {
                                         if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
                                             content(daysForMonth[j]).id(daysForMonth[j])
                                                 .background(
                                                     GeometryReader(){ proxy in
                                                         Color.clear
-                                                            .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
                                                             .onAppear(){
                                                                 calculatedCellSize = proxy.size
                                                             }
@@ -109,6 +122,7 @@ public struct DateGrid<DateView>: View where DateView: View {
                                             content(daysForMonth[j]).hidden()
                                         }
                                     }
+                                    Spacer()
                                 }
                             }
                         }
@@ -142,7 +156,7 @@ struct CalendarView_Previews: PreviewProvider {
             Text(selectedMonthDate.description)
             WeekDaySymbols()
             
-            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), selectedMonth: $selectedMonthDate, mode: .month(estimateHeight: 400)) { date in
+            DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), mode: .month(estimateHeight: 400)) { date in
                 
                 NoramalDayCell(date: date)
             }
