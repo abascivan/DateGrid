@@ -125,6 +125,8 @@ public struct DateGrid<DateView>: View where DateView: View {
                                 }
                             }
                         }
+                        .border(width: 0.5, edges: [.top], color: .secondary)
+                        
                     }
                 }
             }
