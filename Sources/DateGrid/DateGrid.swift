@@ -29,108 +29,108 @@ public struct DateGrid<DateView>: View where DateView: View {
     
     public var body: some View {
         
-//        if #available(iOS 14.0, *) {
-//            VStack {
-//                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
-//                        .font(.headline)
-//                        .fontWeight(.bold)
-//                        .padding(.vertical)
-//                        .padding(.leading)
-//                HStack {
-//                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
-//                        Text(item)
-//                            .font(.headline)
-//                            .fontWeight(.bold)
-//                            .padding(8)
-//                    }
-//                }
-//                TabView(selection: $selectedMonth) {
-//
-//                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
-//
-//                        VStack {
-//
-//                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
-//
-//                                ForEach(viewModel.days(for: month), id: \.self) { date in
-//                                    if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
-//                                        content(date).id(date)
-//                                            .background(
-//                                                GeometryReader(){ proxy in
-//                                                    Color.clear
-//                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
-//                                                }
-//                                            )
-//
-//                                    } else {
-//                                        content(date).hidden()
-//                                    }
-//                                }
-//                            }
-//                            //                        .padding(.vertical, 5)
-//                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
-//                                calculatedCellSize = value.size
-//                            })
-//                            .tag(month)
-//                            //Tab view frame alignment to .Top didnt work dtz y
-//                            Spacer()
-//                        }
-//                        .frame(width: windowWidth)
-//                    }
-//                }
-//                .frame(height: tabViewHeight, alignment: .center)
-//                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-//            }
-//        } else {
-            VStack{
-                HStack {
-                    Text("\(DateFormatter.monthAndYear.string(from: Calendar.current.date(byAdding: .month, value: index - 1, to: selectedMonth)!))")
+        //        if #available(iOS 14.0, *) {
+        //            VStack {
+        //                    Text(DateFormatter.monthAndYear.string(from: selectedMonth))
+        //                        .font(.headline)
+        //                        .fontWeight(.bold)
+        //                        .padding(.vertical)
+        //                        .padding(.leading)
+        //                HStack {
+        //                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
+        //                        Text(item)
+        //                            .font(.headline)
+        //                            .fontWeight(.bold)
+        //                            .padding(8)
+        //                    }
+        //                }
+        //                TabView(selection: $selectedMonth) {
+        //
+        //                    ForEach(viewModel.mainDatesOfAPage, id: \.self) { month in
+        //
+        //                        VStack {
+        //
+        //                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: numberOfDayasInAWeek), spacing: 0) {
+        //
+        //                                ForEach(viewModel.days(for: month), id: \.self) { date in
+        //                                    if viewModel.calendar.isDate(date, equalTo: month, toGranularity: .month) {
+        //                                        content(date).id(date)
+        //                                            .background(
+        //                                                GeometryReader(){ proxy in
+        //                                                    Color.clear
+        //                                                        .preference(key: MyPreferenceKey.self, value: MyPreferenceData(size: proxy.size))
+        //                                                }
+        //                                            )
+        //
+        //                                    } else {
+        //                                        content(date).hidden()
+        //                                    }
+        //                                }
+        //                            }
+        //                            //                        .padding(.vertical, 5)
+        //                            .onPreferenceChange(MyPreferenceKey.self, perform: { value in
+        //                                calculatedCellSize = value.size
+        //                            })
+        //                            .tag(month)
+        //                            //Tab view frame alignment to .Top didnt work dtz y
+        //                            Spacer()
+        //                        }
+        //                        .frame(width: windowWidth)
+        //                    }
+        //                }
+        //                .frame(height: tabViewHeight, alignment: .center)
+        //                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        //            }
+        //        } else {
+        VStack{
+            HStack {
+                Text("\(DateFormatter.monthAndYear.string(from: Calendar.current.date(byAdding: .month, value: index - 1, to: selectedMonth)!))")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .padding(.vertical)
+                    .padding(.leading)
+                Spacer()
+            }
+            
+            HStack {
+                ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
+                    Text(item)
                         .font(.headline)
                         .fontWeight(.bold)
-                        .padding(.vertical)
-                        .padding(.leading)
-                    Spacer()
+                        .padding(8)
                 }
-                HStack {
-                    ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { item in
-                        Text(item)
-                            .font(.headline)
-                            .fontWeight(.bold)
-                            .padding(8)
-                    }
-                }
-                ModelPages(viewModel.mainDatesOfAPage, currentPage: $index, hasControl: false) { pageIndex, month in
-                    VStack {
-                        let daysForMonth = viewModel.days(for: month)
-                        ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
-                            HStack {
-                                ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
-                                    Spacer()
-                                    if j < daysForMonth.count {
-                                        if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
-                                            content(daysForMonth[j]).id(daysForMonth[j])
-                                                .background(
-                                                    GeometryReader(){ proxy in
-                                                        Color.clear
-                                                            .onAppear(){
-                                                                calculatedCellSize = proxy.size
-                                                            }
-                                                    }
-                                                )
-                                            
-                                        } else {
-                                            content(daysForMonth[j]).hidden()
-                                        }
+            }
+            
+            ModelPages(viewModel.mainDatesOfAPage, currentPage: $index, hasControl: false) { pageIndex, month in
+                VStack {
+                    let daysForMonth = viewModel.days(for: month)
+                    ForEach(0 ..< numberOfDayasInAWeek, id: \.self) { i in
+                        HStack(alignment: .top) {
+                            ForEach( (i * numberOfDayasInAWeek) ..< (i * numberOfDayasInAWeek + numberOfDayasInAWeek), id: \.self) { j in
+                                if j < daysForMonth.count {
+                                    if viewModel.calendar.isDate(daysForMonth[j], equalTo: month, toGranularity: .month) {
+                                        content(daysForMonth[j]).id(daysForMonth[j])
+                                            .background(
+                                                GeometryReader(){ proxy in
+                                                    Color.clear
+                                                        .onAppear(){
+                                                            calculatedCellSize = proxy.size
+                                                        }
+                                                }
+                                            )
+                                        
+                                    } else {
+                                        content(daysForMonth[j]).hidden()
                                     }
-                                    Spacer()
                                 }
                             }
                         }
                     }
                 }
-//                .frame(height: tabViewHeight, alignment: .center)
             }
-//        }
+            //                .frame(height: tabViewHeight, alignment: .center)
+        }
+        //        }
     }
     
     //MARK: constant and supportive methods
@@ -138,7 +138,7 @@ public struct DateGrid<DateView>: View where DateView: View {
     private var tabViewHeight: CGFloat {
         let calculatedTabViewHeightByCalculatedCellHeight = viewModel.mode.calculatedheight(calculatedCellSize.height)
         return max(viewModel.mode.estimateHeight, calculatedTabViewHeightByCalculatedCellHeight) + 10
-//        return 300;
+        //        return 300;
     }
     
     var weekContentHeight: CGFloat {
@@ -148,13 +148,13 @@ public struct DateGrid<DateView>: View where DateView: View {
 
 struct CalendarView_Previews: PreviewProvider {
     
-//    @State static var selectedMonthDate = Date()
+    @State static var selectedMonthDate = Date()
     @State static var selectedDate = Date()
     @State static var mothsCount: Int = 0
     
     static var previews: some View {
         VStack {
-//            Text(selectedMonthDate.description)
+            Text(selectedMonthDate.description)
             WeekDaySymbols()
             
             DateGrid(interval: .init(start: Date.getDate(from: "2020 01 11")!, end: Date.getDate(from: "2020 12 11")!), mode: .month(estimateHeight: 400)) { date in
