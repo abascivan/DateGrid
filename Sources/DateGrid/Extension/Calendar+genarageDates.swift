@@ -13,6 +13,10 @@ extension Calendar {
         
         dates.append(interval.start)
         
+        NSLog("interval.start: \(interval.start)")
+        NSLog("interval.end: \(interval.end)")
+        NSLog("---------------------------------")
+        
         enumerateDates(startingAfter: interval.start, matching: components, matchingPolicy: .nextTime) { date, _, stop in
             
             if let date = date {
